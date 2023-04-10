@@ -1,0 +1,51 @@
+# This file contains the essential configs for the ingress controller helm chart
+
+# Verbosity level of the App Gateway Ingress Controller
+verbosityLevel: 5
+
+################################################################################
+# Specify which application gateway the ingress controller will manage
+#
+appgw:
+    subscriptionId: __TERRAFORM_OUTPUT_subscription_subscription_id__ #4741542a-012a-40dc-ad80-cdca217951f0 #<subscriptionId>
+    resourceGroup: __TERRAFORM_OUTPUT_resource_group_name__ #ric-brso-all-rg-k8s #<resourceGroupName>
+    name: __TERRAFORM_OUTPUT_application_gateway_name__ #ric-brso-all-agw-k8s #<applicationGatewayName>
+    usePrivateIP: false
+
+    # Setting appgw.shared to "true" will create an AzureIngressProhibitedTarget CRD.
+    # This prohibits AGIC from applying config for any host/path.
+    # Use "kubectl get AzureIngressProhibitedTargets" to view and change this.
+    shared: false
+
+################################################################################
+# Specify which kubernetes namespace the ingress controller will watch
+# Default value is "default"
+# Leaving this variable out or setting it to blank or empty string would
+# result in Ingress Controller observing all acessible namespaces.
+#
+# kubernetes:
+#   watchNamespace: <namespace>
+
+################################################################################
+# Specify the authentication with Azure Resource Manager
+#
+# Two authentication methods are available:
+# - Option 1: AAD-Pod-Identity (https://github.com/Azure/aad-pod-identity)
+armAuth:
+    type: aadPodIdentity
+    identityResourceID: __TERRAFORM_OUTPUT_identity_resource_id__ #/subscriptions/4741542a-012a-40dc-ad80-cdca217951f0/resourcegroups/ric-brso-all-rg-k8s/providers/Microsoft.ManagedIdentity/userAssignedIdentities/ric-id-k8s #<identityResourceId>
+    identityClientID: __TERRAFORM_OUTPUT_identity_client_id__ #bd18dacf-f64e-47a8-a056-a0ce2c7a1e07 #<identityClientId>
+
+## Alternatively you can use Service Principal credentials
+# armAuth:
+#    type: servicePrincipal
+#    secretJSON: <<Generate this value with: "az ad sp create-for-rbac --subscription <subscription-uuid> --sdk-auth | base64 -w0" >>
+
+################################################################################
+# Specify if the cluster is RBAC enabled or not
+rbac:
+    enabled: true # true/false
+
+# Specify aks cluster related information. THIS IS BEING DEPRECATED.
+# aksClusterConfiguration:
+#     apiServerAddress: __TERRAFORM_OUTPUT___ #<aks-api-server-address>

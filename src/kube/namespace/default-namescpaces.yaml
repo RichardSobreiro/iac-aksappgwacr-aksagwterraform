@@ -1,0 +1,25 @@
+# @format
+
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: daemon-apps
+  labels:
+    azure-key-vault-env-injection: enabled
+    istio-injection: enabled
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: frontend-apps
+  labels:
+    azure-key-vault-env-injection: enabled
+    istio-injection: enabled
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: backend-apps
+  labels:
+    azure-key-vault-env-injection: enabled
+    istio-injection: enabled
